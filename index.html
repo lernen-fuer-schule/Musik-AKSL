@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Musik Klasse 8 — Lernhilfe</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b25;
+    --surface2: #1e2638;
+    --border: #2a3347;
+    --accent: #5b8dee;
+    --accent2: #7ec8a4;
+    --accent3: #e8c56a;
+    --warn: #e87a5b;
+    --text: #e8ecf3;
+    --text-muted: #8a95a8;
+    --text-dim: #5a6478;
+    --staff-line: #3a4455;
+    --note-fill: #c8d8f0;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --surface2: #eef1f7;
+      --border: #d0d8e8;
+      --text: #1a2035;
+      --text-muted: #5a6478;
+      --text-dim: #9aa3b5;
+      --staff-line: #b0bcd0;
+      --note-fill: #2a3a6a;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto; padding: 0 1rem;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); padding: 1rem 1.1rem;
+    font: 500 13px 'Inter', sans-serif;
+    white-space: nowrap; border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+  }
+  nav button:hover { color: var(--text); }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px; color: var(--text);
+    padding: 0.9rem 1rem 0.9rem 0;
+    margin-right: 0.5rem;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* SECTIONS */
+  .section { display: none; max-width: 820px; margin: 0 auto; padding: 2.5rem 1.2rem 4rem; }
+  .section.active { display: block; }
+
+  h1 { font-family: 'Instrument Serif', serif; font-size: 2.2rem; font-weight: 400; margin-bottom: 0.4rem; line-height: 1.2; }
+  h2 { font-family: 'Instrument Serif', serif; font-size: 1.5rem; font-weight: 400; margin: 2.2rem 0 0.8rem; }
+  h3 { font-size: 14px; font-weight: 600; letter-spacing: 0.03em; color: var(--text-muted); text-transform: uppercase; margin: 1.8rem 0 0.5rem; }
+  p { margin-bottom: 0.8rem; color: var(--text); max-width: 68ch; }
+  .sub { color: var(--text-muted); font-size: 13px; margin-bottom: 1.5rem; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 540px) { .card-row { grid-template-columns: 1fr; } }
+
+  .pill {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 2px;
+  }
+  .pill.blue { background: rgba(91,141,238,.15); border-color: rgba(91,141,238,.4); color: var(--accent); }
+  .pill.green { background: rgba(126,200,164,.12); border-color: rgba(126,200,164,.4); color: var(--accent2); }
+  .pill.yellow { background: rgba(232,197,106,.12); border-color: rgba(232,197,106,.4); color: var(--accent3); }
+  .pill.red { background: rgba(232,122,91,.12); border-color: rgba(232,122,91,.4); color: var(--warn); }
+
+  /* INFO BOX */
+  .info-box {
+    background: rgba(91,141,238,.08);
+    border: 1px solid rgba(91,141,238,.25);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 14px;
+  }
+  .info-box.green { background: rgba(126,200,164,.08); border-color: rgba(126,200,164,.3); }
+  .info-box.yellow { background: rgba(232,197,106,.08); border-color: rgba(232,197,106,.3); }
+
+  /* SVG STAFF */
+  .staff-wrap { margin: 1rem 0; overflow-x: auto; }
+  svg.staff { display: block; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 1rem 0; }
+  th { background: var(--surface2); color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* QUIZ */
+  .quiz-q { margin-bottom: 1.5rem; }
+  .quiz-q p { font-weight: 500; margin-bottom: 0.6rem; color: var(--text); font-size: 15px; }
+  .quiz-btn {
+    display: block; width: 100%;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 6px;
+    text-align: left; cursor: pointer;
+    color: var(--text); font: 14px 'Inter', sans-serif;
+    transition: border-color .15s, background .15s;
+  }
+  .quiz-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(91,141,238,.07); }
+  .quiz-btn.correct { border-color: var(--accent2); background: rgba(126,200,164,.12); color: var(--accent2); }
+  .quiz-btn.wrong { border-color: var(--warn); background: rgba(232,122,91,.1); color: var(--warn); }
+  .quiz-btn:disabled { cursor: default; }
+  .quiz-feedback { font-size: 13px; padding: 8px 12px; border-radius: 6px; margin-top: 6px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(126,200,164,.12); color: var(--accent2); }
+  .quiz-feedback.bad { background: rgba(232,122,91,.1); color: var(--warn); }
+  .quiz-score { font-family: 'Instrument Serif', serif; font-size: 1.8rem; text-align: center; margin: 1rem 0; }
+  .btn {
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; padding: 10px 20px; font: 500 14px 'Inter', sans-serif;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn.secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+
+  /* PIANO */
+  .piano { display: flex; margin: 1rem 0; user-select: none; }
+  .wkey {
+    width: 36px; height: 110px;
+    background: #f8f8f8; border: 1px solid #bbb;
+    border-radius: 0 0 5px 5px;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 5px; font-size: 10px; color: #555;
+    cursor: pointer; position: relative; z-index: 1;
+    margin-right: 1px; transition: background .1s;
+    flex-shrink: 0;
+  }
+  .wkey:hover { background: #e8f0ff; }
+  .wkey.active { background: #b8d4ff; }
+  .wkey.highlight { background: #c8e8c8; }
+  .bkey {
+    width: 22px; height: 68px;
+    background: #222; border-radius: 0 0 4px 4px;
+    position: absolute; top: 0; z-index: 2;
+    cursor: pointer; font-size: 9px; color: #aaa;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 4px; transition: background .1s;
+    flex-shrink: 0;
+  }
+  .bkey:hover { background: #3a3a3a; }
+  .bkey.active { background: #446; }
+  .bkey.highlight { background: #2a6a2a; }
+  .piano-wrap { overflow-x: auto; padding-bottom: 4px; margin: 1rem 0; }
+
+  /* QUINTENZIRKEL */
+  .qz-wrap { display: flex; justify-content: center; margin: 1.5rem 0; }
+
+  /* PROGRESS BAR */
+  .prog-bar { height: 6px; background: var(--border); border-radius: 3px; margin: 0.5rem 0 1.5rem; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
+
+  /* EPOCH TIMELINE */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 1.4rem; }
+  .tl-dot { position: absolute; left: -1.75rem; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+  .tl-dot.b { border-color: var(--accent3); }
+  .tl-dot.k { border-color: var(--accent2); }
+  .tl-dot.r { border-color: var(--warn); }
+  .tl-dot.m { border-color: var(--text-muted); }
+  .tl-label { font-size: 11px; color: var(--text-dim); margin-bottom: 2px; }
+  .tl-title { font-weight: 600; font-size: 15px; }
+  .tl-names { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  /* INTERVAL TRAINER */
+  .int-display { font-family: 'Instrument Serif', serif; font-size: 3rem; text-align: center; color: var(--accent); margin: 1rem 0; }
+
+  /* TAG */
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
+  .tag.rein { background: rgba(91,141,238,.18); color: var(--accent); }
+  .tag.gross { background: rgba(126,200,164,.18); color: var(--accent2); }
+  .tag.klein { background: rgba(232,197,106,.18); color: var(--accent3); }
+  .tag.verm { background: rgba(232,122,91,.18); color: var(--warn); }
+
+  .sep { height: 1px; background: var(--border); margin: 2rem 0; }
+  .flex-row { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; margin: 0.5rem 0; }
+
+  /* NOTE LABEL */
+  .note-label { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 13px; font-weight: 500; display: inline-block; margin: 2px; }
+  .note-label .sub-num { font-size: 10px; vertical-align: super; }
+
+  /* MNEMONIC */
+  .mnem { font-size: 13px; padding: 10px 14px; background: var(--surface2); border-radius: 8px; border-left: 3px solid var(--accent3); font-style: italic; margin: 0.6rem 0; }
+  .mnem strong { color: var(--accent3); font-style: normal; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🎵 Musik K8</div>
+  <button class="active" onclick="show('home')">Start</button>
+  <button onclick="show('toene')">Töne</button>
+  <button onclick="show('intervalle')">Intervalle</button>
+  <button onclick="show('tonleitern')">Tonleitern</button>
+  <button onclick="show('quintenzirkel')">Quintenzirkel</button>
+  <button onclick="show('epochen')">Epochen</button>
+  <button onclick="show('dynamik')">Dynamik & Tempo</button>
+  <button onclick="show('quiz')">Quiz</button>
+</nav>
+
+<!-- ======================== HOME ======================== -->
+<div class="section active" id="home">
+  <h1>Musik Klasse 8</h1>
+  <p class="sub">Dein kompletter Lernüberblick für den Test morgen</p>
+
+  <div class="card-row">
+    <div class="card" style="cursor:pointer; border-color: rgba(91,141,238,.4);" onclick="show('toene')">
+      <div style="font-size:2rem;margin-bottom:0.4rem">🎹</div>
+      <div style="font-weight:600;margin-bottom:0.3rem">Töne & Noten</div>
+      <div style="font-size:13px;color:var(--text-muted)">Violin- & Bassschlüssel, Noten benennen, Lagen</div>
+    </div>
+    <div class="card" style="cursor:pointer; border-color: rgba(126,200,164,.4);" onclick="show('intervalle')">
+      <div style="font-size:2rem;margin-bottom:0.4rem">📏</div>
+      <div style="font-weight:600;margin-bottom:0.3rem">Intervalle</div>
+      <div style="font-size:13px;color:var(--text-muted)">Grob- & Feinbestimmung, alle Halbtöne</div>
+    </div>
+    <div class="card" style="cursor:pointer; border-color: rgba(232,197,106,.4);" onclick="show('tonleitern')">
+      <div style="font-size:2rem;margin-bottom:0.4rem">🎼</div>
+      <div style="font-weight:600;margin-bottom:0.3rem">Tonleitern</div>
+      <div style="font-size:13px;color:var(--text-muted)">Dur & Moll, Vorzeichen, Halbtonschritte</div>
+    </div>
+    <div class="card" style="cursor:pointer; border-color: rgba(232,122,91,.4);" onclick="show('epochen')">
+      <div style="font-size:2rem;margin-bottom:0.4rem">🎻</div>
+      <div style="font-weight:600;margin-bottom:0.3rem">Epochen & Komponisten</div>
+      <div style="font-size:13px;color:var(--text-muted)">Barock bis Moderne, wichtige Namen</div>
+    </div>
+    <div class="card" style="cursor:pointer; border-color: rgba(91,141,238,.3);" onclick="show('dynamik')">
+      <div style="font-size:2rem;margin-bottom:0.4rem">🔊</div>
+      <div style="font-weight:600;margin-bottom:0.3rem">Dynamik & Tempo</div>
+      <div style="font-size:13px;color:var(--text-muted)">f, p, Crescendo, Presto, Ritardando …</div>
+    </div>
+    <div class="card" style="cursor:pointer; border-color: rgba(126,200,164,.4); background: rgba(126,200,164,.05);" onclick="show('quiz')">
+      <div style="font-size:2rem;margin-bottom:0.4rem">🧠</div>
+      <div style="font-weight:600;margin-bottom:0.3rem">Quiz</div>
+      <div style="font-size:13px;color:var(--text-muted)">Teste dein Wissen mit 20 Fragen!</div>
+    </div>
+  </div>
+
+  <div class="info-box green" style="margin-top:1.5rem">
+    <strong>Tipp:</strong> Gehe die Themen der Reihe nach durch oder spring direkt zum Quiz, um zu sehen wo du stehst. Alles stammt direkt aus deinen Arbeitsblättern.
+  </div>
+</div>
+
+<!-- ======================== TÖNE ======================== -->
+<div class="section" id="toene">
+  <h1>Töne & Noten</h1>
+  <p class="sub">Noten benennen im Violin- und Bassschlüssel</p>
+
+  <h2>Tastatur & Notennamen</h2>
+  <p>Die weißen Tasten heißen: <strong>C D E F G A H</strong> (kein B – das ist deutsch!). Die schwarzen Tasten haben je zwei Namen (enharmonische Verwechslung).</p>
+
+  <div class="piano-wrap">
+    <div id="piano-container"></div>
+  </div>
+  <div id="piano-info" style="text-align:center;font-size:13px;color:var(--text-muted);min-height:1.5rem">Klicke auf eine Taste</div>
+
+  <div class="sep"></div>
+  <h2>Violinschlüssel — Noten auf den Linien</h2>
+  <div class="card">
+    <p style="margin-bottom:0.5rem">Die 5 Linien von unten nach oben:</p>
+    <div class="info-box yellow">
+      <div class="mnem">
+        🎵 Merksatz für die <strong>Linien</strong>: <strong>„Jede Biene darf große Freude haben"</strong><br>
+        → E G H D F (von unten)
+      </div>
+      <div class="mnem" style="margin-top:6px">
+        🎵 Merksatz für die <strong>Zwischenräume</strong>: <strong>„Friederike aß Creme"</strong><br>
+        → F A C E (von unten)
+      </div>
+    </div>
+  </div>
+
+  <div class="staff-wrap">
+    <svg class="staff" viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Linien -->
+      <line x1="40" y1="30" x2="680" y2="30" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="50" x2="680" y2="50" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="70" x2="680" y2="70" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="90" x2="680" y2="90" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="110" x2="680" y2="110" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <!-- Violinschlüssel Symbol -->
+      <text x="45" y="100" font-size="80" fill="var(--text-muted)" font-family="serif">𝄞</text>
+      <!-- Noten: E G H D F auf Linien -->
+      <ellipse cx="140" cy="110" rx="10" ry="7" fill="var(--note-fill)"/><text x="155" y="114" font-size="13" fill="var(--accent3)">E (1. Linie)</text>
+      <ellipse cx="260" cy="90" rx="10" ry="7" fill="var(--note-fill)"/><text x="275" y="94" font-size="13" fill="var(--accent3)">G (2. Linie)</text>
+      <ellipse cx="380" cy="70" rx="10" ry="7" fill="var(--note-fill)"/><text x="395" y="74" font-size="13" fill="var(--accent3)">H (3. Linie)</text>
+      <ellipse cx="500" cy="50" rx="10" ry="7" fill="var(--note-fill)"/><text x="515" y="54" font-size="13" fill="var(--accent3)">D (4. Linie)</text>
+      <ellipse cx="610" cy="30" rx="10" ry="7" fill="var(--note-fill)"/><text x="625" y="34" font-size="13" fill="var(--accent3)">F (5. Linie)</text>
+      <!-- Noten: F A C E in Zwischenräumen -->
+    </svg>
+  </div>
+
+  <div class="staff-wrap">
+    <svg class="staff" viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <line x1="40" y1="30" x2="680" y2="30" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="50" x2="680" y2="50" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="70" x2="680" y2="70" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="90" x2="680" y2="90" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <line x1="40" y1="110" x2="680" y2="110" stroke="var(--staff-line)" stroke-width="1.5"/>
+      <text x="45" y="100" font-size="80" fill="var(--text-muted)" font-family="serif">𝄞</text>
+      <!-- Zwischenräume F A C E -->
+      <ellipse cx="140" cy="120" rx="10" ry="7" fill="#5b8dee80"/><text x="155" y="124" font-size="13" fill="var(--accent)">F (unter 1. Linie)</text>
+      <ellipse cx="260" cy="100" rx="10" ry="7" fill="#5b8dee80"/><text x="275" y="104" font-size="13" fill="var(--accent)">A (1. Raum)</text>
+      <ellipse cx="380" cy="80" rx="10" ry="7" fill="#5b8dee80"/><text x="395" y="84" font-size="13" fill="var(--accent)">C (2. Raum)</text>
+      <ellipse cx="500" cy="60" rx="10" ry="7" fill="#5b8dee80"/><text x="515" y="64" font-size="13" fill="var(--accent)">E (3. Raum)</text>
+      <ellipse cx="610" cy="40" rx="10" ry="7" fill="#5b8dee80"/><text x="625" y="44" font-size="13" fill="var(--accent)">G (4. Raum)</text>
+    </svg>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Vollständige Notenleiter im Violinschlüssel</h2>
+  <div class="card">
+    <p style="margin-bottom:0.8rem">Von unten nach oben — C<sup>1</sup> bis C<sup>3</sup>:</p>
+    <div class="staff-wrap">
+      <svg viewBox="0 0 760 190" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+        <!-- Linien -->
+        <line x1="30" y1="60" x2="740" y2="60" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="30" y1="80" x2="740" y2="80" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="30" y1="100" x2="740" y2="100" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="30" y1="120" x2="740" y2="120" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="30" y1="140" x2="740" y2="140" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <text x="30" y="130" font-size="80" fill="var(--text-muted)" font-family="serif">𝄞</text>
+        <!-- Hilfslinie für C1 -->
+        <line x1="92" y1="160" x2="118" y2="160" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <!-- Noten: C1=160, D1=150, E1=140, F1=130, G1=120, A1=110, H1=100, C2=90, D2=80, E2=70, F2=60, G2=50 -->
+        <g id="violine-noten">
+          <ellipse cx="105" cy="160" rx="9" ry="6" fill="var(--note-fill)"/><text x="98" y="178" font-size="11" fill="var(--text-muted)">C¹</text>
+          <ellipse cx="155" cy="150" rx="9" ry="6" fill="var(--note-fill)"/><text x="148" y="168" font-size="11" fill="var(--text-muted)">D¹</text>
+          <ellipse cx="205" cy="140" rx="9" ry="6" fill="var(--note-fill)"/><text x="198" y="158" font-size="11" fill="var(--text-muted)">E¹</text>
+          <ellipse cx="255" cy="130" rx="9" ry="6" fill="var(--note-fill)"/><text x="248" y="148" font-size="11" fill="var(--text-muted)">F¹</text>
+          <ellipse cx="305" cy="120" rx="9" ry="6" fill="var(--note-fill)"/><text x="298" y="138" font-size="11" fill="var(--text-muted)">G¹</text>
+          <ellipse cx="355" cy="110" rx="9" ry="6" fill="var(--note-fill)"/><text x="348" y="128" font-size="11" fill="var(--text-muted)">A¹</text>
+          <ellipse cx="405" cy="100" rx="9" ry="6" fill="var(--note-fill)"/><text x="398" y="118" font-size="11" fill="var(--text-muted)">H¹</text>
+          <ellipse cx="455" cy="90" rx="9" ry="6" fill="var(--note-fill)"/><text x="448" y="108" font-size="11" fill="var(--text-muted)">C²</text>
+          <ellipse cx="505" cy="80" rx="9" ry="6" fill="var(--note-fill)"/><text x="498" y="98" font-size="11" fill="var(--text-muted)">D²</text>
+          <ellipse cx="555" cy="70" rx="9" ry="6" fill="var(--note-fill)"/><text x="548" y="88" font-size="11" fill="var(--text-muted)">E²</text>
+          <ellipse cx="605" cy="60" rx="9" ry="6" fill="var(--note-fill)"/><text x="598" y="78" font-size="11" fill="var(--text-muted)">F²</text>
+          <ellipse cx="655" cy="50" rx="9" ry="6" fill="var(--note-fill)"/><line x1="645" y1="50" x2="665" y2="50" stroke="var(--staff-line)" stroke-width="1.5"/><text x="648" y="68" font-size="11" fill="var(--text-muted)">G²</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <h2>Bassschlüssel</h2>
+  <div class="card">
+    <p>Im Bassschlüssel beginnt die 1. Linie mit <strong>G</strong> (eine Oktave tiefer als im Violinschlüssel).</p>
+    <div class="mnem">🎵 Linien: <strong>„Geh Du Alter Esel Home"</strong> → G H D F A</div>
+    <div class="mnem">🎵 Räume: <strong>„Alt Choristen Essen Gut"</strong> → A C E G</div>
+    <div class="staff-wrap">
+      <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+        <line x1="40" y1="30" x2="680" y2="30" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="40" y1="50" x2="680" y2="50" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="40" y1="70" x2="680" y2="70" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="40" y1="90" x2="680" y2="90" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <line x1="40" y1="110" x2="680" y2="110" stroke="var(--staff-line)" stroke-width="1.5"/>
+        <text x="40" y="82" font-size="75" fill="var(--text-muted)" font-family="serif">𝄢</text>
+        <!-- Noten auf Linien G H D F A -->
+        <ellipse cx="130" cy="110" rx="9" ry="6" fill="var(--note-fill)"/><text x="143" y="114" font-size="12" fill="var(--accent3)">G (1. L.)</text>
+        <ellipse cx="230" cy="90" rx="9" ry="6" fill="var(--note-fill)"/><text x="243" y="94" font-size="12" fill="var(--accent3)">H (2. L.)</text>
+        <ellipse cx="330" cy="70" rx="9" ry="6" fill="var(--note-fill)"/><text x="343" y="74" font-size="12" fill="var(--accent3)">D (3. L.)</text>
+        <ellipse cx="430" cy="50" rx="9" ry="6" fill="var(--note-fill)"/><text x="443" y="54" font-size="12" fill="var(--accent3)">F (4. L.)</text>
+        <ellipse cx="530" cy="30" rx="9" ry="6" fill="var(--note-fill)"/><text x="543" y="34" font-size="12" fill="var(--accent3)">A (5. L.)</text>
+      </svg>
+    </div>
+  </div>
+
+  <h2>Noten-Quiz: Welche Note ist das?</h2>
+  <div class="card">
+    <div id="note-quiz-staff"></div>
+    <div id="note-quiz-opts" style="margin-top:1rem"></div>
+    <div id="note-quiz-fb" class="quiz-feedback"></div>
+    <div style="margin-top:1rem;display:flex;gap:0.5rem">
+      <button class="btn secondary" onclick="newNoteQuiz()">Neue Note</button>
+      <span id="note-score" style="color:var(--text-muted);font-size:13px;align-self:center"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== INTERVALLE ======================== -->
+<div class="section" id="intervalle">
+  <h1>Intervalle</h1>
+  <p class="sub">Abstände zwischen zwei Tönen — Grob- & Feinbestimmung</p>
+
+  <h2>Was ist ein Intervall?</h2>
+  <p>Ein Intervall ist der <strong>Abstand zwischen zwei Tönen</strong>. Man bestimmt ihn in zwei Schritten:</p>
+
+  <div class="card-row">
+    <div class="card" style="border-color:rgba(91,141,238,.4)">
+      <h3>Schritt 1: Grobbestimmung</h3>
+      <p style="font-size:14px">Zähle die <strong>weißen Tasten</strong> (Stammtöne) von Ton zu Ton. Vorzeichen ignorieren! Den Ausgangston mitzählen (beginne bei 1).</p>
+      <div class="note-label">c → e = Terz (c, d, e = 3)</div>
+    </div>
+    <div class="card" style="border-color:rgba(126,200,164,.4)">
+      <h3>Schritt 2: Feinbestimmung</h3>
+      <p style="font-size:14px">Zähle <strong>alle Halbtonschritte</strong> (schwarz & weiß) ab dem Ausgangston. Jetzt die Vorzeichen beachten! Bei Vorzeichen am Ausgangston: bei 0 starten.</p>
+      <div class="note-label">c → e = 4 HTS → große Terz</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Die Intervall-Tabelle</h2>
+  <table>
+    <tr>
+      <th>Intervall</th>
+      <th>Grob (Töne)</th>
+      <th>Fein (Halbtöne)</th>
+      <th>Bezeichnung</th>
+    </tr>
+    <tr><td><strong>Prime</strong></td><td>1</td><td>0</td><td><span class="tag rein">rein</span></td></tr>
+    <tr><td></td><td></td><td>1</td><td><span class="tag verm">übermäßig</span></td></tr>
+    <tr><td><strong>Sekunde</strong></td><td>2</td><td>1</td><td><span class="tag klein">klein</span></td></tr>
+    <tr><td></td><td></td><td>2</td><td><span class="tag gross">groß</span></td></tr>
+    <tr><td><strong>Terz</strong></td><td>3</td><td>3</td><td><span class="tag klein">klein</span></td></tr>
+    <tr><td></td><td></td><td>4</td><td><span class="tag gross">groß</span></td></tr>
+    <tr><td><strong>Quarte</strong></td><td>4</td><td>4</td><td><span class="tag verm">vermindert</span></td></tr>
+    <tr><td></td><td></td><td><strong>5</strong></td><td><span class="tag rein">rein</span></td></tr>
+    <tr><td></td><td></td><td>6</td><td><span class="tag verm">übermäßig</span></td></tr>
+    <tr><td><strong>Quinte</strong></td><td>5</td><td>6</td><td><span class="tag verm">vermindert</span></td></tr>
+    <tr><td></td><td></td><td><strong>7</strong></td><td><span class="tag rein">rein</span></td></tr>
+    <tr><td></td><td></td><td>8</td><td><span class="tag verm">übermäßig</span></td></tr>
+    <tr><td><strong>Sexte</strong></td><td>6</td><td>8</td><td><span class="tag klein">klein</span></td></tr>
+    <tr><td></td><td></td><td>9</td><td><span class="tag gross">groß</span></td></tr>
+    <tr><td><strong>Septime</strong></td><td>7</td><td>10</td><td><span class="tag klein">klein</span></td></tr>
+    <tr><td></td><td></td><td>11</td><td><span class="tag gross">groß</span></td></tr>
+    <tr><td><strong>Oktave</strong></td><td>8</td><td>12</td><td><span class="tag rein">rein</span></td></tr>
+  </table>
+
+  <div class="info-box">
+    <strong>Merke:</strong> Prime, Quarte, Quinte, Oktave sind <strong>rein/vermindert/übermäßig</strong>.<br>
+    Sekunde, Terz, Sexte, Septime sind <strong>groß/klein</strong>.
+  </div>
+
+  <div class="sep"></div>
+  <h2>Interaktiver Intervall-Trainer</h2>
+  <div class="card">
+    <p style="font-size:14px">Klicke auf einen Grundton und einen Zielton auf der Klaviatur — das Intervall wird automatisch berechnet!</p>
+    <div id="interval-piano-wrap" class="piano-wrap"></div>
+    <div class="int-display" id="interval-result">— wähle 2 Töne —</div>
+    <div id="interval-detail" style="text-align:center;font-size:13px;color:var(--text-muted)"></div>
+    <button class="btn secondary" style="display:block;margin:1rem auto 0" onclick="resetIntervalPiano()">Zurücksetzen</button>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Übung: Intervall bestimmen</h2>
+  <div class="card">
+    <div id="int-ex-staff"></div>
+    <div id="int-ex-info" style="font-size:14px;margin:0.5rem 0;color:var(--text-muted)"></div>
+    <div id="int-ex-opts" style="margin-top:0.8rem"></div>
+    <div id="int-ex-fb" class="quiz-feedback"></div>
+    <button class="btn secondary" style="margin-top:1rem" onclick="newIntervalExercise()">Neue Übung</button>
+  </div>
+</div>
+
+<!-- ======================== TONLEITERN ======================== -->
+<div class="section" id="tonleitern">
+  <h1>Tonleitern</h1>
+  <p class="sub">Dur, Moll und die richtigen Halbtonschritte</p>
+
+  <h2>Das Muster einer Durtonleiter</h2>
+  <p>Eine Durtonleiter hat immer dasselbe Muster aus Ganz- (G) und Halbtonschritten (H):</p>
+
+  <div class="card" style="font-family:monospace;font-size:14px">
+    <div style="display:flex;gap:0;align-items:center;flex-wrap:wrap">
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--accent);font-weight:600">1</div><div style="background:var(--surface2);padding:6px 10px;border-radius:6px;border:1px solid var(--border)">G</div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--accent);font-weight:600">2</div><div style="background:var(--surface2);padding:6px 10px;border-radius:6px;border:1px solid var(--border)">G</div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--warn);font-weight:600">3</div><div style="background:rgba(232,122,91,.15);padding:6px 10px;border-radius:6px;border:1px solid rgba(232,122,91,.4);color:var(--warn)"><strong>H</strong></div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--accent);font-weight:600">4</div><div style="background:var(--surface2);padding:6px 10px;border-radius:6px;border:1px solid var(--border)">G</div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--accent);font-weight:600">5</div><div style="background:var(--surface2);padding:6px 10px;border-radius:6px;border:1px solid var(--border)">G</div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--accent);font-weight:600">6</div><div style="background:var(--surface2);padding:6px 10px;border-radius:6px;border:1px solid var(--border)">G</div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--warn);font-weight:600">7</div><div style="background:rgba(232,122,91,.15);padding:6px 10px;border-radius:6px;border:1px solid rgba(232,122,91,.4);color:var(--warn)"><strong>H</strong></div></div>
+      <div style="color:var(--text-dim);padding:0 2px">→</div>
+      <div style="text-align:center;margin:4px 2px"><div style="color:var(--accent);font-weight:600">8</div><div style="background:var(--accent);padding:6px 10px;border-radius:6px;color:white">Okt</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:0.8rem">G = Ganztonschritt (2 Halbtöne) · H = Halbtonschritt (1 Halbton) · Halbtonschritte immer zwischen Stufe 3→4 und 7→8</div>
+  </div>
+
+  <h2>Moll: eine kleine Terz tiefer</h2>
+  <div class="card">
+    <p style="font-size:14px">Jede Durtonleiter hat eine <strong>parallele Molltonleiter</strong>. Diese beginnt eine kleine Terz (3 Halbtöne) unterhalb des Grundtons und hat <strong>dieselben Vorzeichen</strong>.</p>
+    <p style="font-size:14px;margin-top:0.5rem">Beispiel: C-Dur → a-Moll (beide ohne Vorzeichen)</p>
+    <p style="font-size:14px">D-Dur (fis, cis) → h-Moll (fis, cis)</p>
+    <div class="info-box green">
+      <strong>Merke:</strong> Für Moll: Zuerst eine kleine Terz nach oben gehen, dann den passenden Merkspruch für die Vorzeichen suchen.
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Interaktiv: Tonleiter anzeigen</h2>
+  <div class="card">
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem">
+      <select id="scale-root" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px">
+        <option>C</option><option>G</option><option>D</option><option>A</option>
+        <option>E</option><option>H</option><option>F</option><option>B</option>
+        <option>Es</option><option>As</option><option>Des</option>
+      </select>
+      <select id="scale-type" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px">
+        <option value="dur">Dur</option>
+        <option value="moll">Moll (natürlich)</option>
+      </select>
+      <button class="btn" onclick="showScale()">Anzeigen</button>
+    </div>
+    <div id="scale-staff-wrap"></div>
+    <div id="scale-info" style="font-size:14px;color:var(--text-muted);margin-top:0.5rem"></div>
+  </div>
+</div>
+
+<!-- ======================== QUINTENZIRKEL ======================== -->
+<div class="section" id="quintenzirkel">
+  <h1>Der Quintenzirkel</h1>
+  <p class="sub">Das wichtigste Hilfsmittel für Vorzeichen</p>
+
+  <p>Der Quintenzirkel zeigt, wie viele Vorzeichen jede Tonart hat. Von C-Dur ausgehend kommt mit jedem Schritt nach rechts ein <strong>#</strong> dazu, nach links ein <strong>♭</strong>.</p>
+
+  <div class="qz-wrap">
+    <svg viewBox="-10 -10 320 320" width="320" height="320" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="150" cy="150" r="130" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+      <circle cx="150" cy="150" r="80" fill="none" stroke="var(--border)" stroke-width="1"/>
+      <text x="150" y="135" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-family="Inter">Dur</text>
+      <text x="150" y="152" text-anchor="middle" font-size="10" fill="var(--text-dim)" font-family="Inter">außen</text>
+      <text x="150" y="167" text-anchor="middle" font-size="10" fill="var(--text-dim)" font-family="Inter">Moll innen</text>
+    </svg>
+  </div>
+  <!-- JS-drawn Quintenzirkel below -->
+  <div id="qz-canvas-wrap" style="display:flex;justify-content:center"></div>
+
+  <div class="sep"></div>
+  <h2>Die Merksätze</h2>
+  <div class="card-row">
+    <div class="card" style="border-color:rgba(232,197,106,.4)">
+      <h3>Kreuz-Tonarten (#)</h3>
+      <div class="mnem"><strong>„Geh Du Alter Esel, Hole Fische!"</strong></div>
+      <p style="font-size:13px;margin-top:0.5rem">Grundtöne: G D A E H Fis</p>
+      <p style="font-size:13px">Reihenfolge der Kreuze: fis cis gis dis ais eis his</p>
+      <div style="margin-top:0.6rem">
+        <span class="pill yellow">G: 1× fis</span>
+        <span class="pill yellow">D: fis,cis</span>
+        <span class="pill yellow">A: +gis</span>
+        <span class="pill yellow">E: +dis</span>
+        <span class="pill yellow">H: +ais</span>
+        <span class="pill yellow">Fis: +eis</span>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(91,141,238,.4)">
+      <h3>b-Tonarten (♭)</h3>
+      <div class="mnem"><strong>„Frische Brötchen Essen Asse Des Gesangs"</strong></div>
+      <p style="font-size:13px;margin-top:0.5rem">Grundtöne: F B Es As Des Ges</p>
+      <p style="font-size:13px">Reihenfolge der ♭: b es as des ges ces fes</p>
+      <div style="margin-top:0.6rem">
+        <span class="pill blue">F: 1× b</span>
+        <span class="pill blue">B: b,es</span>
+        <span class="pill blue">Es: +as</span>
+        <span class="pill blue">As: +des</span>
+        <span class="pill blue">Des: +ges</span>
+        <span class="pill blue">Ges: +ces</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Übung: Welche Vorzeichen hat diese Tonart?</h2>
+  <div class="card">
+    <div id="qz-ex-q" style="font-weight:600;font-size:16px;margin-bottom:1rem"></div>
+    <div id="qz-ex-opts"></div>
+    <div id="qz-ex-fb" class="quiz-feedback"></div>
+    <button class="btn secondary" style="margin-top:1rem" onclick="newQZExercise()">Neue Frage</button>
+  </div>
+</div>
+
+<!-- ======================== EPOCHEN ======================== -->
+<div class="section" id="epochen">
+  <h1>Musikepochen & Komponisten</h1>
+  <p class="sub">Von Barock bis Moderne</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot b"></div>
+      <div class="tl-label">1600 – 1750</div>
+      <div class="tl-title" style="color:var(--accent3)">Barock</div>
+      <div class="tl-names">Antonio Vivaldi (1678–1741) · Johann Sebastian Bach (1685–1750) · Georg Friedrich Händel (1685–1759)</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Merkmale: Ornamente, Polyphonie, Basso continuo</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot k"></div>
+      <div class="tl-label">1750 – 1820</div>
+      <div class="tl-title" style="color:var(--accent2)">Klassik</div>
+      <div class="tl-names">Joseph Haydn (1732–1809) · Wolfgang Amadeus Mozart (1756–1791) · Ludwig van Beethoven (1770–1827)</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Merkmale: Klare Struktur, Sonatenform, Wiener Klassik</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot r"></div>
+      <div class="tl-label">1820 – 1910</div>
+      <div class="tl-title" style="color:var(--warn)">Romantik</div>
+      <div class="tl-names">Franz Schubert (1797–1828) · Felix Mendelssohn-Bartholdy (1809–1847) · Robert Schumann (1810–1856)</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Merkmale: Gefühlsausdruck, Programmusik, große Orchester</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot m"></div>
+      <div class="tl-label">ab 1910</div>
+      <div class="tl-title" style="color:var(--text-muted)">Moderne</div>
+      <div class="tl-names">Béla Bartók (1881–1945) · Igor Strawinsky (1882–1971) · Carl Orff (1895–1982)</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">Merkmale: Neue Klänge, Atonalität, Volksmusik-Einflüsse</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Zuordnungs-Quiz</h2>
+  <div class="card">
+    <p style="font-size:14px;margin-bottom:1rem">Welche Epoche gehört zu diesem Komponisten?</p>
+    <div id="epoch-q" style="font-weight:600;font-size:16px;margin-bottom:1rem"></div>
+    <div id="epoch-opts"></div>
+    <div id="epoch-fb" class="quiz-feedback"></div>
+    <div style="margin-top:1rem;display:flex;gap:0.5rem;align-items:center">
+      <button class="btn secondary" onclick="newEpochQuiz()">Nächste Frage</button>
+      <span id="epoch-score" style="font-size:13px;color:var(--text-muted)"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== DYNAMIK ======================== -->
+<div class="section" id="dynamik">
+  <h1>Dynamik & Tempo</h1>
+  <p class="sub">Lautstärke und Geschwindigkeit in der Musik</p>
+
+  <h2>Dynamik (Lautstärke)</h2>
+  <table>
+    <tr><th>Zeichen</th><th>Name</th><th>Bedeutung</th></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>f</em></td><td>Forte</td><td>Laut</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>ff</em></td><td>Fortissimo</td><td>Sehr laut</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>fff</em></td><td>Fortefortissimo</td><td>So laut wie möglich</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>p</em></td><td>Piano</td><td>Leise</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>pp</em></td><td>Pianissimo</td><td>Sehr leise</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>ppp</em></td><td>Piano Pianissimo</td><td>So leise wie möglich</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>mf</em></td><td>Mezzoforte</td><td>Halblaut</td></tr>
+    <tr><td style="font-size:1.3rem;font-style:italic"><em>mp</em></td><td>Mezzopiano</td><td>Halbleise</td></tr>
+    <tr><td>Cresc.</td><td>Crescendo</td><td>Lauter werden</td></tr>
+    <tr><td>Decresc.</td><td>Decrescendo</td><td>Leiser werden</td></tr>
+  </table>
+
+  <div style="margin:1.5rem 0">
+    <svg viewBox="0 0 400 60" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" max-width="400">
+      <text x="10" y="40" font-size="14" fill="var(--text-muted)" font-family="Inter">p</text>
+      <polygon points="40,30 200,10 200,50" fill="none" stroke="var(--accent)" stroke-width="2"/>
+      <text x="210" y="40" font-size="14" fill="var(--text-muted)" font-family="Inter">f</text>
+      <text x="90" y="55" font-size="11" fill="var(--accent)" font-family="Inter">Crescendo (lauter werden)</text>
+      <polygon points="230,10 230,50 390,30" fill="none" stroke="var(--warn)" stroke-width="2"/>
+      <text x="285" y="55" font-size="11" fill="var(--warn)" font-family="Inter">Decrescendo</text>
+    </svg>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Tempo</h2>
+  <table>
+    <tr><th>Begriff</th><th>Bedeutung</th></tr>
+    <tr><td>Largo</td><td>Breit (sehr langsam)</td></tr>
+    <tr><td>Adagio</td><td>Langsam</td></tr>
+    <tr><td>Andante</td><td>Gehend (gemäßigt)</td></tr>
+    <tr><td>Moderato</td><td>Mäßig schnell</td></tr>
+    <tr><td>Presto</td><td>Sehr schnell</td></tr>
+    <tr><td>Accelerando</td><td>Schneller werden</td></tr>
+    <tr><td>Ritardando</td><td>Langsamer werden</td></tr>
+  </table>
+
+  <div class="sep"></div>
+  <h2>Quiz: Dynamik & Tempo</h2>
+  <div class="card">
+    <div id="dyn-q" style="font-weight:600;font-size:1.4rem;margin-bottom:1rem;font-style:italic;color:var(--accent)"></div>
+    <div id="dyn-opts"></div>
+    <div id="dyn-fb" class="quiz-feedback"></div>
+    <div style="margin-top:1rem;display:flex;gap:0.5rem;align-items:center">
+      <button class="btn secondary" onclick="newDynQuiz()">Nächste Frage</button>
+      <span id="dyn-score" style="font-size:13px;color:var(--text-muted)"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== QUIZ ======================== -->
+<div class="section" id="quiz">
+  <h1>Großes Quiz</h1>
+  <p class="sub">20 Fragen — alles aus dem Klasse-8-Stoff</p>
+
+  <div id="quiz-container">
+    <div class="prog-bar"><div class="prog-fill" id="quiz-prog" style="width:0%"></div></div>
+    <div id="quiz-counter" style="font-size:12px;color:var(--text-muted);margin-bottom:1rem"></div>
+    <div id="quiz-question" style="font-weight:600;font-size:1.1rem;margin-bottom:1rem"></div>
+    <div id="quiz-options"></div>
+    <div id="quiz-feedback-box" class="quiz-feedback"></div>
+    <div style="margin-top:1.2rem">
+      <button class="btn" id="quiz-next" onclick="nextQuizQuestion()" style="display:none">Weiter →</button>
+    </div>
+  </div>
+  <div id="quiz-result" style="display:none;text-align:center;padding:2rem 0">
+    <div class="quiz-score" id="quiz-score-txt"></div>
+    <p id="quiz-score-msg" style="color:var(--text-muted);margin:0.5rem auto"></p>
+    <button class="btn" onclick="startQuiz()" style="margin-top:1.5rem">Nochmal versuchen</button>
+  </div>
+</div>
+
+<script>
+// ========== NAV ==========
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['home','toene','intervalle','tonleitern','quintenzirkel','epochen','dynamik','quiz'];
+  const btns = document.querySelectorAll('nav button');
+  const i = idx.indexOf(id);
+  if(i >= 0) btns[i].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ========== PIANO ==========
+const pianoNotes = [
+  {name:'C',type:'w',midi:60},{name:'Cis/Des',type:'b',midi:61},
+  {name:'D',type:'w',midi:62},{name:'Dis/Es',type:'b',midi:63},
+  {name:'E',type:'w',midi:64},{name:'F',type:'w',midi:65},
+  {name:'Fis/Ges',type:'b',midi:66},{name:'G',type:'w',midi:67},
+  {name:'Gis/As',type:'b',midi:68},{name:'A',type:'w',midi:69},
+  {name:'Ais/B',type:'b',midi:70},{name:'H',type:'w',midi:71},
+  {name:'C²',type:'w',midi:72},{name:'Cis²/Des²',type:'b',midi:73},
+  {name:'D²',type:'w',midi:74}
+];
+
+function buildPiano(containerId, clickFn, size=1) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;display:inline-flex;';
+  const whites = pianoNotes.filter(n=>n.type==='w');
+  const ww = Math.round(36*size), wh = Math.round(110*size);
+  const bw = Math.round(22*size), bh = Math.round(68*size);
+  wrap.style.height = wh+'px';
+
+  let wx = 0;
+  whites.forEach((note,wi) => {
+    const key = document.createElement('div');
+    key.className='wkey'; key.dataset.midi=note.midi; key.dataset.name=note.name;
+    key.style.cssText=`width:${ww}px;height:${wh}px;position:relative;border:1px solid #aaa;background:#f8f8f8;border-radius:0 0 5px 5px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:${10*size}px;color:#555;cursor:pointer;margin-right:1px;flex-shrink:0;user-select:none;transition:background .1s;`;
+    key.textContent = note.name.replace('²','').replace('¹','');
+    if(clickFn) key.addEventListener('click', ()=>clickFn(note));
+    wrap.appendChild(key);
+    wx += ww+1;
+  });
+
+  // black keys
+  let bx = 0;
+  for(let i=0;i<pianoNotes.length;i++){
+    const note = pianoNotes[i];
+    if(note.type==='b'){
+      const prev = pianoNotes.slice(0,i).filter(n=>n.type==='w').length;
+      const key = document.createElement('div');
+      key.className='bkey'; key.dataset.midi=note.midi; key.dataset.name=note.name;
+      const left = (prev*(ww+1)) - bw/2;
+      key.style.cssText=`width:${bw}px;height:${bh}px;background:#222;border-radius:0 0 4px 4px;position:absolute;top:0;left:${left}px;z-index:2;cursor:pointer;font-size:${8*size}px;color:#aaa;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;user-select:none;transition:background .1s;`;
+      if(clickFn) key.addEventListener('click', ()=>clickFn(note));
+      wrap.appendChild(key);
+    }
+  }
+  container.appendChild(wrap);
+}
+
+buildPiano('piano-container', (note)=>{
+  document.querySelectorAll('#piano-container .wkey, #piano-container .bkey').forEach(k=>k.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('piano-info').textContent = `Note: ${note.name} (MIDI ${note.midi})`;
+});
+
+// ========== NOTE QUIZ ==========
+const violinNotes = [
+  {name:'E¹',line:1},{name:'F¹',space:'1r'},{name:'G¹',line:2},{name:'A¹',space:'2r'},
+  {name:'H¹',line:3},{name:'C²',space:'3r'},{name:'D²',line:4},{name:'E²',space:'4r'},{name:'F²',line:5}
+];
+let noteQuizScore=[0,0];
+
+function drawNoteOnStaff(containerId,noteIdx){
+  const yPositions=[110,100,90,80,70,60,50,40,30];
+  const y=yPositions[noteIdx];
+  const svgH=170;
+  const noteNames=['E¹','F¹','G¹','A¹','H¹','C²','D²','E²','F²'];
+  let lines='';
+  for(let yi of [110,90,70,50,30]) lines+=`<line x1="40" y1="${yi}" x2="300" y2="${yi}" stroke="var(--staff-line)" stroke-width="1.5"/>`;
+  document.getElementById(containerId).innerHTML=`<div class="staff-wrap"><svg viewBox="0 0 320 ${svgH}" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">${lines}<text x="40" y="100" font-size="70" fill="var(--text-muted)" font-family="serif">𝄞</text><ellipse cx="200" cy="${y}" rx="12" ry="8" fill="var(--accent)"/></svg></div>`;
+  return noteIdx;
+}
+
+let currentNoteIdx;
+function newNoteQuiz(){
+  currentNoteIdx=Math.floor(Math.random()*9);
+  drawNoteOnStaff('note-quiz-staff',currentNoteIdx);
+  const correct=violinNotes[currentNoteIdx].name;
+  let opts=[correct];
+  while(opts.length<4){const r=violinNotes[Math.floor(Math.random()*9)].name;if(!opts.includes(r))opts.push(r);}
+  opts.sort(()=>Math.random()-.5);
+  const fb=document.getElementById('note-quiz-fb');
+  fb.className='quiz-feedback';fb.style.display='none';
+  document.getElementById('note-quiz-opts').innerHTML=opts.map(o=>`<button class="quiz-btn" onclick="checkNoteQuiz('${o}','${correct}',this)">${o}</button>`).join('');
+  document.getElementById('note-score').textContent=`${noteQuizScore[0]}/${noteQuizScore[1]} richtig`;
+}
+
+function checkNoteQuiz(chosen,correct,btn){
+  document.querySelectorAll('#note-quiz-opts .quiz-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('note-quiz-fb');
+  noteQuizScore[1]++;
+  if(chosen===correct){btn.classList.add('correct');fb.className='quiz-feedback ok show';fb.textContent='✓ Richtig!';noteQuizScore[0]++;}
+  else{btn.classList.add('wrong');fb.className='quiz-feedback bad show';fb.textContent=`✗ Falsch – es war ${correct}`;
+    document.querySelectorAll('#note-quiz-opts .quiz-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+  document.getElementById('note-score').textContent=`${noteQuizScore[0]}/${noteQuizScore[1]} richtig`;
+}
+newNoteQuiz();
+
+// ========== INTERVAL PIANO ==========
+let intervalSelected=[];
+function buildIntervalPiano(){
+  const wrap=document.getElementById('interval-piano-wrap');
+  wrap.innerHTML='<div id="int-piano"></div>';
+  buildPiano('int-piano',(note)=>selectIntervalNote(note));
+}
+
+const intervalNames={
+  0:'Prime (rein)',1:'Sekunde (klein)',2:'Sekunde (groß)',3:'Terz (klein)',
+  4:'Terz (groß)',5:'Quarte (rein)',6:'Tritonus',7:'Quinte (rein)',
+  8:'Sexte (klein)',9:'Sexte (groß)',10:'Septime (klein)',11:'Septime (groß)',12:'Oktave (rein)'
+};
+
+function selectIntervalNote(note){
+  intervalSelected.push(note);
+  document.querySelectorAll('#int-piano .wkey, #int-piano .bkey').forEach(k=>{
+    if(parseInt(k.dataset.midi)===note.midi) k.style.background=(note.type==='w'?'#b8d4ff':'#446');
+  });
+  if(intervalSelected.length===2){
+    const diff=Math.abs(intervalSelected[1].midi-intervalSelected[0].midi);
+    const name=intervalNames[diff]||`${diff} Halbtöne`;
+    document.getElementById('interval-result').textContent=name;
+    document.getElementById('interval-detail').textContent=`Halbtöne: ${diff} · Töne: ${diff<=0?1:Math.ceil(diff/2)} (Grob)`;
+    intervalSelected=[];
+  } else {
+    document.getElementById('interval-result').textContent='→ zweiten Ton wählen';
+    document.getElementById('interval-detail').textContent='';
+  }
+}
+function resetIntervalPiano(){intervalSelected=[];buildIntervalPiano();document.getElementById('interval-result').textContent='— wähle 2 Töne —';document.getElementById('interval-detail').textContent='';}
+buildIntervalPiano();
+
+// ========== INTERVAL EXERCISE ==========
+const intExercises=[
+  {label:'c → e',hts:4,grob:'Terz',fein:'groß',ans:'Große Terz'},
+  {label:'g → d',hts:7,grob:'Quinte',fein:'rein',ans:'Reine Quinte'},
+  {label:'c → f',hts:5,grob:'Quarte',fein:'rein',ans:'Reine Quarte'},
+  {label:'a → c',hts:3,grob:'Terz',fein:'klein',ans:'Kleine Terz'},
+  {label:'d → h',hts:9,grob:'Sexte',fein:'groß',ans:'Große Sexte'},
+  {label:'e → f',hts:1,grob:'Sekunde',fein:'klein',ans:'Kleine Sekunde'},
+  {label:'c → g',hts:7,grob:'Quinte',fein:'rein',ans:'Reine Quinte'},
+  {label:'f → c',hts:7,grob:'Quinte',fein:'rein',ans:'Reine Quinte'},
+  {label:'c → h',hts:11,grob:'Septime',fein:'groß',ans:'Große Septime'},
+  {label:'d → f',hts:3,grob:'Terz',fein:'klein',ans:'Kleine Terz'},
+];
+let currentIntEx;
+function newIntervalExercise(){
+  currentIntEx=intExercises[Math.floor(Math.random()*intExercises.length)];
+  document.getElementById('int-ex-info').textContent=`Bestimme das Intervall: ${currentIntEx.label}`;
+  const opts=['Kleine Terz','Große Terz','Reine Quarte','Reine Quinte','Kleine Sexte','Große Sexte','Kleine Sekunde','Reine Oktave','Kleine Septime','Große Septime'];
+  const sel=[currentIntEx.ans];
+  while(sel.length<4){const r=opts[Math.floor(Math.random()*opts.length)];if(!sel.includes(r))sel.push(r);}
+  sel.sort(()=>Math.random()-.5);
+  const fb=document.getElementById('int-ex-fb');fb.className='quiz-feedback';fb.style.display='none';
+  document.getElementById('int-ex-opts').innerHTML=sel.map(o=>`<button class="quiz-btn" onclick="checkIntEx('${o}','${currentIntEx.ans}',this)">${o}</button>`).join('');
+}
+function checkIntEx(chosen,correct,btn){
+  document.querySelectorAll('#int-ex-opts .quiz-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('int-ex-fb');
+  if(chosen===correct){btn.classList.add('correct');fb.className='quiz-feedback ok show';fb.textContent=`✓ Richtig! ${currentIntEx.hts} Halbtöne → ${correct}`;}
+  else{btn.classList.add('wrong');fb.className='quiz-feedback bad show';fb.textContent=`✗ Falsch. Es sind ${currentIntEx.hts} Halbtöne → ${correct}`;
+    document.querySelectorAll('#int-ex-opts .quiz-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+}
+newIntervalExercise();
+
+// ========== TONLEITER ANZEIGE ==========
+const scales={
+  'C-Dur':{notes:['C','D','E','F','G','A','H','C'],vz:'keine'},
+  'G-Dur':{notes:['G','A','H','C','D','E','Fis','G'],vz:'fis'},
+  'D-Dur':{notes:['D','E','Fis','G','A','H','Cis','D'],vz:'fis, cis'},
+  'A-Dur':{notes:['A','H','Cis','D','E','Fis','Gis','A'],vz:'fis, cis, gis'},
+  'E-Dur':{notes:['E','Fis','Gis','A','H','Cis','Dis','E'],vz:'fis, cis, gis, dis'},
+  'H-Dur':{notes:['H','Cis','Dis','E','Fis','Gis','Ais','H'],vz:'fis, cis, gis, dis, ais'},
+  'F-Dur':{notes:['F','G','A','B','C','D','E','F'],vz:'b'},
+  'B-Dur':{notes:['B','C','D','Es','F','G','A','B'],vz:'b, es'},
+  'Es-Dur':{notes:['Es','F','G','As','B','C','D','Es'],vz:'b, es, as'},
+  'As-Dur':{notes:['As','B','C','Des','Es','F','G','As'],vz:'b, es, as, des'},
+  'Des-Dur':{notes:['Des','Es','F','Ges','As','B','C','Des'],vz:'b, es, as, des, ges'},
+  'a-Moll':{notes:['A','H','C','D','E','F','G','A'],vz:'keine'},
+  'e-Moll':{notes:['E','Fis','G','A','H','C','D','E'],vz:'fis'},
+  'h-Moll':{notes:['H','Cis','D','E','Fis','G','A','H'],vz:'fis, cis'},
+  'd-Moll':{notes:['D','E','F','G','A','B','C','D'],vz:'b'},
+  'g-Moll':{notes:['G','A','B','C','D','Es','F','G'],vz:'b, es'},
+  'c-Moll':{notes:['C','D','Es','F','G','As','B','C'],vz:'b, es, as'},
+  'f-Moll':{notes:['F','G','As','B','C','Des','Es','F'],vz:'b, es, as, des'},
+};
+
+// Halbtonschritte im Dur-Muster: G G H G G G H
+// Moll: G H G G H G G
+function showScale(){
+  const root=document.getElementById('scale-root').value;
+  const type=document.getElementById('scale-type').value;
+  const key=root+'-'+(type==='dur'?'Dur':'Moll');
+  const scale=scales[key]||scales[root+'-Dur'];
+  if(!scale){document.getElementById('scale-info').textContent='Tonleiter nicht gefunden.';return;}
+
+  // Determine half steps
+  const hs_dur=[2,2,1,2,2,2,1]; // G G H G G G H
+  const hs_moll=[2,1,2,2,1,2,2];
+  const hs=type==='dur'?hs_dur:hs_moll;
+
+  const svgW=700,svgH=180;
+  const startY=140,ystep=10;
+  const xStart=120,xStep=70;
+  let svg=`<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">`;
+  for(let yi of [60,80,100,120,140]) svg+=`<line x1="30" y1="${yi}" x2="${svgW-10}" y2="${yi}" stroke="var(--staff-line)" stroke-width="1.5"/>`;
+  svg+=`<text x="30" y="130" font-size="70" fill="var(--text-muted)" font-family="serif">𝄞</text>`;
+
+  // Note positions (C-Dur as reference: C=140,D=130,...H=90,C=80 etc.)
+  const noteYC={C:140,D:130,E:120,F:110,G:100,A:90,H:80};
+  for(let i=0;i<8;i++){
+    let noteName=scale.notes[i];
+    let baseName=noteName.replace('is','').replace('es','').replace('b','').replace('s','').toUpperCase().charAt(0);
+    if(baseName==='B')baseName='H'; // B→H in bass
+    if(noteName==='B')baseName='B';
+    let ny=noteYC[baseName]||100;
+    // second octave
+    if(i===7)ny-=70;
+    const x=xStart+i*xStep;
+    svg+=`<ellipse cx="${x}" cy="${ny}" rx="11" ry="8" fill="var(--accent)"/>`;
+    svg+=`<text x="${x}" y="${ny+20}" text-anchor="middle" font-size="12" fill="var(--text-muted)">${noteName}</text>`;
+    // Halbtonschritt markieren
+    if(i<7 && hs[i]===1){
+      const x2=xStart+(i+1)*xStep;
+      svg+=`<line x1="${x+12}" y1="${ny}" x2="${x2-12}" y2="${ny-10}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="4,2"/>`;
+      svg+=`<text x="${(x+x2)/2}" y="${ny-14}" text-anchor="middle" font-size="10" fill="var(--warn)">H</text>`;
+    }
+  }
+  svg+='</svg>';
+  document.getElementById('scale-staff-wrap').innerHTML=`<div class="staff-wrap">${svg}</div>`;
+  document.getElementById('scale-info').innerHTML=`<strong>${key}</strong> · Vorzeichen: ${scale.vz} · Rote Bögen = Halbtonschritte`;
+}
+showScale();
+
+// ========== QUINTENZIRKEL SVG ==========
+(function drawQZ(){
+  const dur=['C','G','D','A','E','H','Fis/Ges','Des','As','Es','B','F'];
+  const moll=['a','e','h','fis','cis','gis','dis/es','b','f','c','g','d'];
+  const vz=['0','1#','2#','3#','4#','5#','6#/6b','5b','4b','3b','2b','1b'];
+  const cx=170,cy=170,r1=140,r2=100,r3=68;
+  const colors={'#':['rgba(232,197,106,.8)'],'b':['rgba(91,141,238,.8)'],'0':['rgba(126,200,164,.8)']};
+  let svg=`<svg viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" width="min(340px,100%)" height="auto">`;
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r1+16}" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>`;
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r2-6}" fill="var(--surface2)" stroke="var(--border)" stroke-width="1"/>`;
+  svg+=`<text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="12" fill="var(--text-muted)" font-family="Inter">Dur</text>`;
+  svg+=`<text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="10" fill="var(--text-dim)" font-family="Inter">außen</text>`;
+  svg+=`<text x="${cx}" y="${cy+22}" text-anchor="middle" font-size="9" fill="var(--text-dim)" font-family="Inter">Moll innen</text>`;
+  for(let i=0;i<12;i++){
+    const angle=(i*30-90)*Math.PI/180;
+    const x1=cx+r1*Math.cos(angle), y1=cy+r1*Math.sin(angle);
+    const x2=cx+r2*Math.cos(angle), y2=cy+r2*Math.sin(angle);
+    const x3=cx+r3*Math.cos(angle), y3=cy+r3*Math.sin(angle);
+    const v=vz[i];
+    const col=v.includes('#')?'var(--accent3)':v.includes('b')?'var(--accent)':'var(--accent2)';
+    svg+=`<circle cx="${x1}" cy="${y1}" r="18" fill="var(--surface)" stroke="${col}" stroke-width="1.8"/>`;
+    svg+=`<text x="${x1}" y="${y1+1}" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="600" fill="var(--text)" font-family="Inter">${dur[i]}</text>`;
+    svg+=`<text x="${x1}" y="${y1+13}" text-anchor="middle" font-size="8" fill="${col}" font-family="Inter">${v}</text>`;
+    svg+=`<circle cx="${x2}" cy="${y2}" r="13" fill="var(--surface2)" stroke="var(--border)" stroke-width="1"/>`;
+    svg+=`<text x="${x2}" y="${y2}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="var(--text-muted)" font-family="Inter">${moll[i]}</text>`;
+  }
+  svg+='</svg>';
+  document.getElementById('qz-canvas-wrap').innerHTML=svg;
+})();
+
+// ========== QZ EXERCISE ==========
+const qzData=[
+  {q:'G-Dur',a:'1 Kreuz (fis)',opts:['keine','1 Kreuz (fis)','2 Kreuze (fis,cis)','1 b (b)']},
+  {q:'D-Dur',a:'2 Kreuze (fis,cis)',opts:['1 Kreuz (fis)','2 Kreuze (fis,cis)','3 Kreuze (fis,cis,gis)','keine']},
+  {q:'F-Dur',a:'1 b (b)',opts:['keine','2 b (b,es)','1 b (b)','1 Kreuz (fis)']},
+  {q:'B-Dur',a:'2 b (b,es)',opts:['1 b (b)','2 b (b,es)','3 b (b,es,as)','keine']},
+  {q:'Es-Dur',a:'3 b (b,es,as)',opts:['2 b (b,es)','3 b (b,es,as)','4 b (b,es,as,des)','keine']},
+  {q:'A-Dur',a:'3 Kreuze (fis,cis,gis)',opts:['2 Kreuze','3 Kreuze (fis,cis,gis)','4 Kreuze','1 Kreuz']},
+  {q:'C-Dur',a:'keine',opts:['1 Kreuz','1 b','keine','2 Kreuze']},
+  {q:'As-Dur',a:'4 b (b,es,as,des)',opts:['3 b (b,es,as)','4 b (b,es,as,des)','5 b','2 b']},
+];
+let qzScore=[0,0];
+function newQZExercise(){
+  const q=qzData[Math.floor(Math.random()*qzData.length)];
+  document.getElementById('qz-ex-q').textContent=`Welche Vorzeichen hat ${q.q}?`;
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  const fb=document.getElementById('qz-ex-fb');fb.className='quiz-feedback';fb.style.display='none';
+  document.getElementById('qz-ex-opts').innerHTML=opts.map(o=>`<button class="quiz-btn" onclick="checkQZ('${o}','${q.a}',this)">${o}</button>`).join('');
+}
+function checkQZ(chosen,correct,btn){
+  document.querySelectorAll('#qz-ex-opts .quiz-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('qz-ex-fb');qzScore[1]++;
+  if(chosen===correct){btn.classList.add('correct');fb.className='quiz-feedback ok show';fb.textContent='✓ Richtig!';qzScore[0]++;}
+  else{btn.classList.add('wrong');fb.className='quiz-feedback bad show';fb.textContent=`✗ Falsch – richtig: ${correct}`;
+    document.querySelectorAll('#qz-ex-opts .quiz-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+}
+newQZExercise();
+
+// ========== EPOCH QUIZ ==========
+const epochData=[
+  {name:'Antonio Vivaldi',epoch:'Barock'},
+  {name:'Johann Sebastian Bach',epoch:'Barock'},
+  {name:'Georg Friedrich Händel',epoch:'Barock'},
+  {name:'Joseph Haydn',epoch:'Klassik'},
+  {name:'Wolfgang Amadeus Mozart',epoch:'Klassik'},
+  {name:'Ludwig van Beethoven',epoch:'Klassik'},
+  {name:'Franz Schubert',epoch:'Romantik'},
+  {name:'Felix Mendelssohn-Bartholdy',epoch:'Romantik'},
+  {name:'Robert Schumann',epoch:'Romantik'},
+  {name:'Béla Bartók',epoch:'Moderne'},
+  {name:'Igor Strawinsky',epoch:'Moderne'},
+  {name:'Carl Orff',epoch:'Moderne'},
+];
+let epochScore=[0,0];
+function newEpochQuiz(){
+  const q=epochData[Math.floor(Math.random()*epochData.length)];
+  document.getElementById('epoch-q').textContent=`${q.name}`;
+  const opts=['Barock','Klassik','Romantik','Moderne'];
+  const fb=document.getElementById('epoch-fb');fb.className='quiz-feedback';fb.style.display='none';
+  document.getElementById('epoch-opts').innerHTML=opts.map(o=>`<button class="quiz-btn" onclick="checkEpoch('${o}','${q.epoch}',this)">${o}</button>`).join('');
+}
+function checkEpoch(chosen,correct,btn){
+  document.querySelectorAll('#epoch-opts .quiz-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('epoch-fb');epochScore[1]++;
+  if(chosen===correct){btn.classList.add('correct');fb.className='quiz-feedback ok show';fb.textContent='✓ Richtig!';epochScore[0]++;}
+  else{btn.classList.add('wrong');fb.className='quiz-feedback bad show';fb.textContent=`✗ Falsch – es war ${correct}`;
+    document.querySelectorAll('#epoch-opts .quiz-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+  document.getElementById('epoch-score').textContent=`${epochScore[0]}/${epochScore[1]} richtig`;
+}
+newEpochQuiz();
+
+// ========== DYNAMIK QUIZ ==========
+const dynData=[
+  {q:'f',a:'Laut (Forte)',opts:['Laut (Forte)','Leise (Piano)','Halblaut (Mezzoforte)','Sehr laut (Fortissimo)']},
+  {q:'pp',a:'Sehr leise (Pianissimo)',opts:['Leise','Sehr leise (Pianissimo)','So leise wie möglich','Halbleise']},
+  {q:'Presto',a:'Sehr schnell',opts:['Langsam','Gehend','Mäßig schnell','Sehr schnell']},
+  {q:'Crescendo',a:'Lauter werden',opts:['Leiser werden','Lauter werden','Schneller werden','Langsamer werden']},
+  {q:'Ritardando',a:'Langsamer werden',opts:['Schneller werden','Langsamer werden','Leiser werden','Lauter werden']},
+  {q:'Adagio',a:'Langsam',opts:['Sehr schnell','Gehend','Langsam','Breit']},
+  {q:'mf',a:'Halblaut (Mezzoforte)',opts:['Laut','Halblaut (Mezzoforte)','Halbleise','Sehr laut']},
+  {q:'Accelerando',a:'Schneller werden',opts:['Langsamer werden','Schneller werden','Lauter werden','Leiser werden']},
+  {q:'Andante',a:'Gehend',opts:['Breit','Langsam','Gehend','Sehr schnell']},
+  {q:'fff',a:'So laut wie möglich',opts:['Sehr laut','Laut','So laut wie möglich','Halblaut']},
+  {q:'Largo',a:'Breit (sehr langsam)',opts:['Gehend','Breit (sehr langsam)','Langsam','Mäßig schnell']},
+  {q:'Decrescendo',a:'Leiser werden',opts:['Lauter werden','Schneller werden','Leiser werden','Langsamer werden']},
+];
+let dynScore=[0,0];
+function newDynQuiz(){
+  const q=dynData[Math.floor(Math.random()*dynData.length)];
+  document.getElementById('dyn-q').textContent=q.q;
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  const fb=document.getElementById('dyn-fb');fb.className='quiz-feedback';fb.style.display='none';
+  document.getElementById('dyn-opts').innerHTML=opts.map(o=>`<button class="quiz-btn" onclick="checkDyn('${o}','${q.a}',this)">${o}</button>`).join('');
+}
+function checkDyn(chosen,correct,btn){
+  document.querySelectorAll('#dyn-opts .quiz-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('dyn-fb');dynScore[1]++;
+  if(chosen===correct){btn.classList.add('correct');fb.className='quiz-feedback ok show';fb.textContent='✓ Richtig!';dynScore[0]++;}
+  else{btn.classList.add('wrong');fb.className='quiz-feedback bad show';fb.textContent=`✗ Falsch – richtig: ${correct}`;
+    document.querySelectorAll('#dyn-opts .quiz-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+  document.getElementById('dyn-score').textContent=`${dynScore[0]}/${dynScore[1]} richtig`;
+}
+newDynQuiz();
+
+// ========== GROSSES QUIZ ==========
+const bigQuiz=[
+  {q:'Welchen Namen hat die 3. Linie im Violinschlüssel?',a:'H¹',opts:['E¹','G¹','H¹','D²']},
+  {q:'Wie viele Halbtöne hat eine reine Quinte?',a:'7',opts:['5','6','7','8']},
+  {q:'Welche Vorzeichen hat A-Dur?',a:'fis, cis, gis',opts:['fis, cis','fis, cis, gis','fis, cis, gis, dis','fis']},
+  {q:'Was bedeutet „Presto"?',a:'Sehr schnell',opts:['Langsam','Gehend','Sehr schnell','Mäßig schnell']},
+  {q:'Zu welcher Epoche gehört Mozart?',a:'Klassik',opts:['Barock','Klassik','Romantik','Moderne']},
+  {q:'Was bedeutet „pp"?',a:'Sehr leise',opts:['Leise','Sehr leise','So leise wie möglich','Halbleise']},
+  {q:'Wie viele Halbtöne hat eine große Terz?',a:'4',opts:['3','4','5','6']},
+  {q:'Welchen Merksatz gibt es für die b-Tonarten?',a:'Frische Brötchen Essen Asse Des Gesangs',opts:['Geh Du Alter Esel','Frische Brötchen Essen Asse Des Gesangs','Jede Biene darf große Freude haben','Friederike aß Creme']},
+  {q:'Zu welcher Epoche gehört Vivaldi?',a:'Barock',opts:['Klassik','Romantik','Barock','Moderne']},
+  {q:'Was ist der Unterschied zwischen Dur und Moll?',a:'Moll beginnt eine kleine Terz tiefer',opts:['Moll hat mehr Vorzeichen','Dur klingt trauriger','Moll beginnt eine kleine Terz tiefer','Es gibt keinen Unterschied']},
+  {q:'Was bedeutet „Crescendo"?',a:'Lauter werden',opts:['Leiser werden','Schneller werden','Langsamer werden','Lauter werden']},
+  {q:'Wie viele Halbtöne hat eine kleine Sekunde?',a:'1',opts:['1','2','3','4']},
+  {q:'Welche Vorzeichen hat F-Dur?',a:'b',opts:['fis','b','es','keine']},
+  {q:'Zu welcher Epoche gehört Schubert?',a:'Romantik',opts:['Barock','Klassik','Romantik','Moderne']},
+  {q:'Was ist eine „reine Quarte"?',a:'4 Töne, 5 Halbtöne',opts:['4 Töne, 4 Halbtöne','4 Töne, 5 Halbtöne','4 Töne, 6 Halbtöne','5 Töne, 7 Halbtöne']},
+  {q:'Was bedeutet „Adagio"?',a:'Langsam',opts:['Breit','Langsam','Gehend','Mäßig']},
+  {q:'Wie viele Vorzeichen hat C-Dur?',a:'Keine',opts:['Keine','1 Kreuz','1 b','2 Kreuze']},
+  {q:'Welchen Ton haben die Räume im Bassschlüssel (von unten)?',a:'A C E G',opts:['C E G H','F A C E','A C E G','G H D F']},
+  {q:'Was bedeutet „mf"?',a:'Halblaut (Mezzoforte)',opts:['Sehr laut','Laut','Halblaut (Mezzoforte)','Halbleise']},
+  {q:'Was ist ein Intervall?',a:'Der Abstand zwischen zwei Tönen',opts:['Eine Tonleiter','Der Rhythmus','Der Abstand zwischen zwei Tönen','Die Lautstärke']},
+];
+
+let quizShuffled=[], quizIdx=0, quizRight=0;
+function startQuiz(){
+  quizShuffled=[...bigQuiz].sort(()=>Math.random()-.5);
+  quizIdx=0; quizRight=0;
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-container').style.display='block';
+  showBigQ();
+}
+function showBigQ(){
+  if(quizIdx>=quizShuffled.length){endQuiz();return;}
+  const q=quizShuffled[quizIdx];
+  document.getElementById('quiz-prog').style.width=((quizIdx/quizShuffled.length)*100)+'%';
+  document.getElementById('quiz-counter').textContent=`Frage ${quizIdx+1} von ${quizShuffled.length}`;
+  document.getElementById('quiz-question').textContent=q.q;
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('quiz-options').innerHTML=opts.map(o=>`<button class="quiz-btn" onclick="answerBigQ('${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}',this)">${o}</button>`).join('');
+  document.getElementById('quiz-feedback-box').className='quiz-feedback';
+  document.getElementById('quiz-next').style.display='none';
+}
+function answerBigQ(chosen,correct,btn){
+  document.querySelectorAll('#quiz-options .quiz-btn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('quiz-feedback-box');
+  if(chosen===correct){btn.classList.add('correct');fb.className='quiz-feedback ok show';fb.textContent='✓ Richtig!';quizRight++;}
+  else{btn.classList.add('wrong');fb.className='quiz-feedback bad show';fb.textContent=`✗ Falsch – richtig: ${correct}`;
+    document.querySelectorAll('#quiz-options .quiz-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});}
+  document.getElementById('quiz-next').style.display='block';
+}
+function nextQuizQuestion(){quizIdx++;showBigQ();}
+function endQuiz(){
+  document.getElementById('quiz-container').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+  const pct=Math.round((quizRight/quizShuffled.length)*100);
+  document.getElementById('quiz-score-txt').textContent=`${quizRight} / ${quizShuffled.length}`;
+  let msg='';
+  if(pct>=90)msg='🎉 Ausgezeichnet! Du bist bereit für den Test!';
+  else if(pct>=70)msg='👍 Gut gemacht! Nochmal die schwachen Themen üben.';
+  else if(pct>=50)msg='📖 Fast! Schau dir die Bereiche nochmal an wo du Fehler gemacht hast.';
+  else msg='💪 Übe weiter – du schaffst das! Die Erklärungen auf den anderen Seiten helfen.';
+  document.getElementById('quiz-score-msg').textContent=msg;
+}
+startQuiz();
+</script>
+</body>
+</html>
